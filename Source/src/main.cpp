@@ -32,6 +32,15 @@ struct ShaderProgramSources
 static ShaderProgramSources ParseShader(const std::string& filepath)
 {
     std::ifstream stream(filepath);
+    LOG("Shader Path:" << std::filesystem::absolute(filepath)); //Shader 주소
+    if(stream.fail())
+    {
+        LOG("Shader file not found!");
+    }
+    else
+    {
+        LOG("Shader file found!");
+    }
 
     enum class ShaderType
     {
@@ -41,7 +50,6 @@ static ShaderProgramSources ParseShader(const std::string& filepath)
     std::string line;
     std::stringstream ss[2];
     ShaderType type = ShaderType::NONE;
-    LOG("Shader Path:" << std::filesystem::absolute(filepath));
     while(getline(stream, line))
     {
         if(line.find("#shader") != std::string::npos)   //npos: 찾지 못하였을때 line.find 반환값
@@ -82,6 +90,12 @@ static unsigned int CompileShader(unsigned int type, const std::string source)
         glDeleteShader(id);
         return 0;
     }
+    else
+    {
+        LOG("succeed to compiled "
+            << (type == GL_VERTEX_SHADER ? "vertex" : "fragment")
+            << " shader!");
+    }
 
     return id;
 }
@@ -105,8 +119,8 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 
 int main(void)  //main 함수
 {
-    LOG("study_opengl Version 0.0.11");
-    LOG("Shader Path:" << std::filesystem::current_path());
+    LOG("study_opengl Version 0.0.23");
+    LOG("Current_Path:" << std::filesystem::current_path()); //파일 주소
     GLFWwindow* window;
     
 
@@ -160,8 +174,7 @@ int main(void)  //main 함수
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);   //buffer data 생성 or 초기화 
     //STATIC: 데이터 저장소 한번 수정 여러번 사용, DRAW 데이터 저장소 application에 의해 수정됨 그리기와 이미지 지정 명령에
 
-
-    ShaderProgramSources source = ParseShader("../res/shader/Basic.shader");
+    ShaderProgramSources source = ParseShader("./Source/res/shader/Basic.shader");
 
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);   //Installs a program object as part of current rendering state
@@ -173,7 +186,7 @@ int main(void)  //main 함수
         glClear(GL_COLOR_BUFFER_BIT);
 
         GLClearError();
-        glDrawElements(GL_TRIANGLES, 6, GL_INT, nullptr);    // mode: 삼각형, count: Indices 수, type: Indices type
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);    // mode: 삼각형, count: Indices 수, type: Indices type
         GLCheakError();
 
         /* Swap front and back buffers */
