@@ -119,10 +119,9 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 
 int main(void)  //main 함수
 {
-    LOG("study_opengl Version 0.0.23");
+    LOG("study_opengl Version 0.0.23");     //#10 Dealing with Errors in OpenGL
     LOG("Current_Path:" << std::filesystem::current_path()); //파일 주소
     GLFWwindow* window;
-    
 
     if (!glfwInit())    //GLFW 초기화
         return -1;
