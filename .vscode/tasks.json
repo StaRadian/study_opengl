@@ -1,0 +1,61 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "g++ build for debug",
+            "command": "C:\\mingw64\\bin\\g++.exe", //mingw64 g++
+            "args": [
+                "-std=c++20",
+                "-I${workspaceFolder}\\Dependencies\\include",
+                "-L${workspaceFolder}\\Dependencies\\library\\GLFW\\lib-mingw-w64",
+                "-L${workspaceFolder}\\Dependencies\\library\\GLEW\\x64",
+                "-DGLEW_STATIC",
+                "-DEBUG",
+                "${workspaceFolder}\\Source\\src\\*.cpp",
+                "-g", //디버그
+                "-lglfw3",
+                "-lglew32s",
+                "-lopengl32",
+                "-lgdi32",
+                "-o",
+                "${workspaceFolder}\\myStudy.exe" //실행파일 위치 이름
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "type": "cppbuild",
+            "label": "g++ build for release",
+            "command": "C:\\mingw64\\bin\\g++.exe", //mingw64 g++
+            "args": [
+                "-std=c++20",
+                "-I${workspaceFolder}\\Dependencies\\include",
+                "-L${workspaceFolder}\\Dependencies\\library\\GLFW\\lib-mingw-w64",
+                "-L${workspaceFolder}\\Dependencies\\library\\GLEW\\x64",
+                "-DGLEW_STATIC",
+                "-RELEASE",
+                "${workspaceFolder}\\Source\\src\\*.cpp",
+                "-mwindows", //DOS창 제거
+                "-lglfw3",
+                "-lglew32s",
+                "-lopengl32",
+                "-lgdi32",
+                "-o",
+                "${workspaceFolder}\\myStudy.exe" //실행파일 위치 이름
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        }
+    ]
+}
