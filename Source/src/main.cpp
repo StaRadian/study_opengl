@@ -7,20 +7,32 @@
 
 #include <filesystem>   //경로 표시
 
-
-#define LOG(x) std::cout << x << std::endl
+#if DEBUG
+    #define LOG(x) std::cout << x << std::endl
+    #define ASSERT(x) if (!(x)) __debugbreak();
+    #define GLCall(x) GLClearError();\
+        x;\
+        ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+#else
+    #define LOG(x) 
+    #define GLCall(x) x
+    #define ASSERT(x)
+#endif
 
 static void GLClearError()
 {
     while(glGetError() != GL_NO_ERROR);
 }
 
-static void GLCheakError()
+static bool GLLogCall(const char* function, const char* file, int line)
 {
     while(GLenum error = glGetError())
     {
-        LOG("[OpenGL Error] (" << std::hex << error << ")");
+        LOG("[OpenGL Error] (0x" << std::setw(4) << std::setfill('0') << std::hex << error << "): "     //에러 코드 출력
+            << function << " " << file << ":" << std::dec << line);                                                 
+        return false;
     }
+    return true;
 }
 
 struct ShaderProgramSources
@@ -72,22 +84,22 @@ static unsigned int CompileShader(unsigned int type, const std::string source)
 {
     unsigned int id = glCreateShader(type); //create empty shader object
     const char* src = source.c_str();
-    glShaderSource(id, 1, &src, nullptr);
-    glCompileShader(id);    //Shader compile
+    GLCall(glShaderSource(id, 1, &src, nullptr));
+    GLCall(glCompileShader(id));    //Shader compile
 
     int result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result);  //
+    GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));  //
     if(result == GL_FALSE)  //failed compiled shader
     {
         int length;
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
+        GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
         char message[length];
-        glGetShaderInfoLog(id, length, &length, message);
+        GLCall(glGetShaderInfoLog(id, length, &length, message));
         LOG("failed to compiled "
             << (type == GL_VERTEX_SHADER ? "vertex" : "fragment")
             << " shader!");
         LOG(message);
-        glDeleteShader(id);
+        GLCall(glDeleteShader(id));
         return 0;
     }
     else
@@ -106,20 +118,20 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
     unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
     unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
-    glAttachShader(program, vs); //program에 vs shader를 연결
-    glAttachShader(program, fs); //program에 fs shader를 연결
-    glLinkProgram(program);     //link program
-    glValidateProgram(program); //유효성 검사 program 지정, 개발용으로만 유용
+    GLCall(glAttachShader(program, vs)); //program에 vs shader를 연결
+    GLCall(glAttachShader(program, fs)); //program에 fs shader를 연결
+    GLCall(glLinkProgram(program));     //link program
+    GLCall(glValidateProgram(program)); //유효성 검사 program 지정, 개발용으로만 유용
 
-    glDeleteShader(vs); //delete shader vs 
-    glDeleteShader(fs); //delete shader fs
+    GLCall(glDeleteShader(vs)); //delete shader vs 
+    GLCall(glDeleteShader(fs)); //delete shader fs
 
     return program;
 }
 
 int main(void)  //main 함수
 {
-    LOG("study_opengl Version 0.0.23");     //#10 Dealing with Errors in OpenGL
+    LOG("study_opengl Version 0.0.24");     //#11 Uniforms in OpenGL
     LOG("Current_Path:" << std::filesystem::current_path()); //파일 주소
     GLFWwindow* window;
 
@@ -136,6 +148,8 @@ int main(void)  //main 함수
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+
+    glfwSwapInterval(1);    //60fps
 
     if (glewInit() != GLEW_OK)     //GLEW 초기화
     {
@@ -159,43 +173,56 @@ int main(void)  //main 함수
     };
 
     unsigned int buffer;    //버퍼 ID
-    glGenBuffers(1,&buffer);    //버퍼 생성
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);     //array buffer 탐색 bind = selecting
-    glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);   //buffer data 생성 or 초기화 
+    GLCall(glGenBuffers(1,&buffer));    //버퍼 생성
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));     //array buffer 탐색 bind = selecting
+    GLCall(glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW));   //buffer data 생성 or 초기화 
     //STATIC: 데이터 저장소 한번 수정 여러번 사용, DRAW 데이터 저장소 application에 의해 수정됨 그리기와 이미지 지정 명령에
 
-    glEnableVertexAttribArray(0);   //VertexAttribArray Index:0 Enable
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, (const void*)0);    //index = 0, size: 2d, type, 
+    GLCall(glEnableVertexAttribArray(0));   //VertexAttribArray Index:0 Enable
+    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, (const void*)0));    //index = 0, size: 2d, type, 
 
     unsigned int ibo;    //Index buffer array ID
-    glGenBuffers(1,&ibo);    //IBO 버퍼 생성
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);     //target: Vertex array indices
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);   //buffer data 생성 or 초기화 
+    GLCall(glGenBuffers(1,&ibo));    //IBO 버퍼 생성
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));     //target: Vertex array indices
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));   //buffer data 생성 or 초기화 
     //STATIC: 데이터 저장소 한번 수정 여러번 사용, DRAW 데이터 저장소 application에 의해 수정됨 그리기와 이미지 지정 명령에
 
-    ShaderProgramSources source = ParseShader("./Source/res/shader/Basic.shader");
+    //ShaderProgramSources source = ParseShader("./Source/res/shader/Basic.shader");
+    ShaderProgramSources source = ParseShader("../res/shader/Basic.shader");
 
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-    glUseProgram(shader);   //Installs a program object as part of current rendering state
+    GLCall(glUseProgram(shader));   //Installs a program object as part of current rendering state
 
+    GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+    ASSERT(location != -1);     //Uniform 탐색 실패
+    GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
+
+    float r = 0.0f;
+    float increment = 0.05f;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-        GLClearError();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);    // mode: 삼각형, count: Indices 수, type: Indices type
-        GLCheakError();
+        GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
+        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));    // mode: 삼각형, count: Indices 수, type: Indices type
+
+        if(r > 1.0f)
+            increment = -0.05f;
+        else if(r < 0.0f)
+            increment = 0.05f;
+
+        r += increment;
 
         /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+        GLCall(glfwSwapBuffers(window));
 
         /* Poll for and process events */
-        glfwPollEvents();
+        GLCall(glfwPollEvents());
     }
 
-    glDeleteProgram(shader);
+    GLCall(glDeleteProgram(shader));
 
     glfwTerminate();    //GLFW 종료
     LOG("Close Window");
