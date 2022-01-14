@@ -8,7 +8,7 @@
             "name": "study_opengl - build and debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}\\myStudy.exe",
+            "program": "${workspaceFolder}\\myStudy_Debug.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
