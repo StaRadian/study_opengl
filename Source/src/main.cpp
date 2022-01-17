@@ -8,6 +8,7 @@
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
+#include "VertexArray.h"
 
 #include <filesystem>   //경로 표시
 
@@ -157,10 +158,11 @@ int main(void)  //main 함수
         GLCall(glGenVertexArrays(1, &vao));     //vertex array object 이름 생성
         GLCall(glBindVertexArray(vao));         //bind a vertex array object
 
+        VertexArray va;
         VertexBuffer vb(positions, 4 * 2 * sizeof(float));
-
-        GLCall(glEnableVertexAttribArray(0));   //VertexAttribArray Index:0 Enable
-        GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, (const void*)0));    //index = 0, size: 2d, type, 
+        VertexBufferLayout layout;
+        layout.Push<float>(3);
+        va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, 6);
 
@@ -195,7 +197,7 @@ int main(void)  //main 함수
             GLCall(glUseProgram(shader));
             GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 
-            GLCall(glBindVertexArray(vao));
+            va.Bind();
             ib.Bind();
 
             GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));    // mode: 삼각형, count: Indices 수, type: Indices type
