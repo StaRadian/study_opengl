@@ -161,7 +161,7 @@ int main(void)  //main 함수
         VertexArray va;
         VertexBuffer vb(positions, 4 * 2 * sizeof(float));
         VertexBufferLayout layout;
-        layout.Push<float>(3);
+        layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
         IndexBuffer ib(indices, 6);
