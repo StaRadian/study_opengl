@@ -1,110 +1,14 @@
 #include <GL/glew.h>    //GLEW 라이브러리
 #include <GLFW/glfw3.h> //GLFW 라이브러리
 #include <iostream> //for LOG
-#include <fstream>  //for ParseShader
-#include <string>   //for getline
+#include <filesystem>   //경로 표시
 
 #include "Renderer.h"
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
-
-#include <filesystem>   //경로 표시
-
-struct ShaderProgramSources
-{
-    std::string VertexSource;
-    std::string FragmentSource;
-};
-
-static ShaderProgramSources ParseShader(const std::string& filepath)
-{
-    std::ifstream stream(filepath);
-    LOG("Shader Path:" << std::filesystem::absolute(filepath)); //Shader 주소
-    if(stream.fail())
-    {
-        LOG("Shader file not found!");
-    }
-    else
-    {
-        LOG("Shader file found!");
-    }
-
-    enum class ShaderType
-    {
-        NONE = -1, VERTEX = 0, FRAGMENT = 1
-    };
-
-    std::string line;
-    std::stringstream ss[2];
-    ShaderType type = ShaderType::NONE;
-    while(getline(stream, line))
-    {
-        if(line.find("#shader") != std::string::npos)   //npos: 찾지 못하였을때 line.find 반환값
-        {
-            if(line.find("vertex") != std::string::npos)    //set mode vertex
-                type = ShaderType::VERTEX;
-            else if(line.find("fragment") != std::string::npos) //set mode fragment
-                type = ShaderType::FRAGMENT;
-        }
-        else
-        {
-            ss[(int)type] << line << "\n";
-        }
-    }
-
-    return  { ss[0].str(), ss[1].str() };
-}
-
-static unsigned int CompileShader(unsigned int type, const std::string source)
-{
-    unsigned int id = glCreateShader(type); //create empty shader object
-    const char* src = source.c_str();
-    GLCall(glShaderSource(id, 1, &src, nullptr));
-    GLCall(glCompileShader(id));    //Shader compile
-
-    int result;
-    GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));  //
-    if(result == GL_FALSE)  //failed compiled shader
-    {
-        int length;
-        GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
-        char message[length];
-        GLCall(glGetShaderInfoLog(id, length, &length, message));
-        LOG("failed to compiled "
-            << (type == GL_VERTEX_SHADER ? "vertex" : "fragment")
-            << " shader!");
-        LOG(message);
-        GLCall(glDeleteShader(id));
-        return 0;
-    }
-    else
-    {
-        LOG("succeed to compiled "
-            << (type == GL_VERTEX_SHADER ? "vertex" : "fragment")
-            << " shader!");
-    }
-
-    return id;
-}
-
-static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader)
-{
-    unsigned int program = glCreateProgram();   //create empty program object
-    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-    GLCall(glAttachShader(program, vs)); //program에 vs shader를 연결
-    GLCall(glAttachShader(program, fs)); //program에 fs shader를 연결
-    GLCall(glLinkProgram(program));     //link program
-    GLCall(glValidateProgram(program)); //유효성 검사 program 지정, 개발용으로만 유용
-
-    GLCall(glDeleteShader(vs)); //delete shader vs 
-    GLCall(glDeleteShader(fs)); //delete shader fs
-
-    return program;
-}
+#include "Shader.h"
 
 int main(void)  //main 함수
 {
@@ -166,25 +70,21 @@ int main(void)  //main 함수
 
         IndexBuffer ib(indices, 6);
 
-        ShaderProgramSources source = ParseShader(
+        Shader shader(
             #ifdef DEBUG
                 "../res/shader/Basic.shader"
             #else
                 "./Source/res/shader/Basic.shader"
             #endif
             );
+            
+        shader.Bind();
+        shader.SetUniform4f("u_Color",  0.8f, 0.3f, 0.8f, 1.0f);
 
-        unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-        GLCall(glUseProgram(shader));   //Installs a program object as part of current rendering state
-
-        GLCall(int location = glGetUniformLocation(shader, "u_Color"));
-        ASSERT(location != -1);     //Uniform 탐색 실패
-        GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
-
-        GLCall(glBindVertexArray(0));
-        GLCall(glUseProgram(0));
-        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+        va.Unbind();
+        vb.Unbind();
+        ib.Unbind();
+        shader.Unbind();
 
         float r = 0.0f;
         float increment = 0.05f;
@@ -194,8 +94,8 @@ int main(void)  //main 함수
             /* Render here */
             GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
-            GLCall(glUseProgram(shader));
-            GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
+            shader.Bind();
+            shader.SetUniform4f("u_Color",  r, 0.3f, 0.8f, 1.0f);
 
             va.Bind();
             ib.Bind();
@@ -216,7 +116,6 @@ int main(void)  //main 함수
             GLCall(glfwPollEvents());
         }
 
-        GLCall(glDeleteProgram(shader));
     }
 
     glfwTerminate();    //GLFW 종료

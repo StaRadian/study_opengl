@@ -3,7 +3,7 @@
 template<typename T>
 void VertexBufferLayout::Push(unsigned int count)
 {
-    ASSERT(false);
+    //static_assert(false, "Push() type not used"); //예외 not work! why?
 }
 
 template<>
@@ -12,7 +12,7 @@ void VertexBufferLayout::Push<float>(unsigned int count)     //float
     //glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, (const void*)0));
     //index: 0, size: 2d, type: float, normalized(if not float): false, stride: float * 2, pointer
     m_Elements.push_back({ GL_FLOAT, count, GL_FALSE });   //push_back: 변수 추가
-    m_Stride +=  count * VertexBufferElement::GetSizeOfType(GL_FLOAT); // 4byte
+    m_Stride += count * VertexBufferElement::GetSizeOfType(GL_FLOAT); // 4byte
 }
 
 template<> 
