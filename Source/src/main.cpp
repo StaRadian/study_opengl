@@ -10,6 +10,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Renderer.h"
+#include "Texture.h"
 
 int main(void)  //main 함수
 {
@@ -47,27 +48,32 @@ int main(void)  //main 함수
     LOG(glGetString(GL_VERSION));   //OpenGL 버전 체크
     
     {
-        float positions[] = {   //x,y
-            0.5f,  0.5f,       //0
-            0.5f, -0.5f,       //1
-            -0.5f, -0.5f,       //2
-            -0.5f,  0.5f        //3
+        float positions[] = {   //x,y   //s,t
+            -0.5f,  -0.5f,  0.0f,   0.0f,       //0
+             0.5f,  -0.5f,  1.0f,   0.0f,       //1
+             0.5f,   0.5f,  1.0f,   1.0f,       //2
+            -0.5f,   0.5f,  0.0f,   1.0f        //3
         };
 
         unsigned int indices[] = {
             0, 1, 2,
             2, 3, 0
         };
+
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
         
-        VertexArray va;
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
-        VertexBufferLayout layout;
+        VertexArray va; //VertexArray
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));  //VertexBuffer
+        VertexBufferLayout layout;  //VertexBufferLayout
+        layout.Push<float>(2);
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
 
-        IndexBuffer ib(indices, 6);
+        IndexBuffer ib(indices, 6); //IndexBuffer
 
-        Shader shader(
+        Shader shader(  //Shader
             #ifdef DEBUG
                 "../res/shader/Basic.shader"
             #else
@@ -77,6 +83,16 @@ int main(void)  //main 함수
             
         shader.Bind();
         shader.SetUniform4f("u_Color",  0.8f, 0.3f, 0.8f, 1.0f);
+
+        Texture texture(
+            #ifdef DEBUG
+                "../res/textures/Mistarion_cat.png"
+            #else
+                "./Source/res/textures/Mistarion_cat.png"
+            #endif
+            );
+        texture.Bind(); //slot: 0
+        shader.SetUniform1i("u_Texture", 0);    //slot: 0
 
         va.Unbind();
         vb.Unbind();
