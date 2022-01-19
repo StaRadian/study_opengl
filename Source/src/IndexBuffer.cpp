@@ -1,6 +1,7 @@
 #include "IndexBuffer.h"
 
-#include "Renderer.h"
+#include <GL/glew.h>    //GLEW 라이브러리
+#include "Debug.h"
 
 IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count)
     : m_Count(count)

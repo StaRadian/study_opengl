@@ -1,6 +1,7 @@
 #include "VertexBuffer.h"
 
-#include "Renderer.h"
+#include <GL/glew.h>    //GLEW 라이브러리
+#include "Debug.h"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size)
 {

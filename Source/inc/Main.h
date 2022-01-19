@@ -1,6 +1,1 @@
-#ifndef MAIN
-    #define MAIN
-
-    
-
-#endif
+#pragma once

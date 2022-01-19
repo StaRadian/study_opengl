@@ -4,9 +4,10 @@
 #include <fstream>  //for ParseShader
 #include <string>   //for getline
 
-#include <filesystem>   //경로 표시
+#include <GL/glew.h>    //GLEW 라이브러리
 
-#include "Renderer.h"
+#include <filesystem>   //경로 표시
+#include "Debug.h"
 
 Shader::Shader(const std::string& filepath)
     : m_FilePath(filepath), m_RendererID(0)

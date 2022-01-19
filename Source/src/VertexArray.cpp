@@ -1,7 +1,5 @@
 #include "VertexArray.h"
 
-#include "Renderer.h"
-
 VertexArray::VertexArray()
 {
     GLCall(glGenVertexArrays(1, &m_RendererID));     //vertex array object 이름 생성    //size:1 arrays:m_RendererID

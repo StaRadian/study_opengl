@@ -1,41 +1,39 @@
-#ifndef VERTEXBUFFERLAYOUT
-    #define VERTEXBUFFERLAYOUT
-    #include <vector>
-    #include "Renderer.h"
+#pragma once
+#include <vector>
+#include <GL/glew.h>    //GLEW 라이브러리
+#include "Debug.h"
 
-    struct VertexBufferElement
+struct VertexBufferElement
+{
+    unsigned int type;
+    unsigned int count;
+    unsigned char normalized;
+
+    static unsigned int GetSizeOfType(unsigned int type)
     {
-        unsigned int type;
-        unsigned int count;
-        unsigned char normalized;
-
-        static unsigned int GetSizeOfType(unsigned int type)
+        switch (type)
         {
-            switch (type)
-            {
-                case GL_FLOAT:          return 4;
-                case GL_UNSIGNED_INT:   return 4;
-                case GL_UNSIGNED_BYTE:  return 1;
-            }
-            ASSERT(false);  //debug break
-            return 0;
+            case GL_FLOAT:          return 4;
+            case GL_UNSIGNED_INT:   return 4;
+            case GL_UNSIGNED_BYTE:  return 1;
         }
-    };
-    
-    class VertexBufferLayout
-    {
-    private:
-        std::vector<VertexBufferElement> m_Elements;
-        unsigned int m_Stride;
-    public:
-        VertexBufferLayout()
-            : m_Stride(0) {}
+        ASSERT(false);  //debug break
+        return 0;
+    }
+};
 
-        template<typename T>
-        void Push(unsigned int count);
+class VertexBufferLayout
+{
+private:
+    std::vector<VertexBufferElement> m_Elements;
+    unsigned int m_Stride;
+public:
+    VertexBufferLayout()
+        : m_Stride(0) {}
 
-        inline const std::vector<VertexBufferElement> GetElements() const { return m_Elements; };
-        inline unsigned int GetStride() const { return m_Stride; }
-    };
+    template<typename T>
+    void Push(unsigned int count);
 
-#endif
+    inline const std::vector<VertexBufferElement> GetElements() const { return m_Elements; };
+    inline unsigned int GetStride() const { return m_Stride; }
+};

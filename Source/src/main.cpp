@@ -3,7 +3,7 @@
 #include <iostream> //for LOG
 #include <filesystem>   //경로 표시
 
-#include "Renderer.h"
+#include "Debug.h"
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
@@ -57,11 +57,7 @@ int main(void)  //main 함수
             0, 1, 2,
             2, 3, 0
         };
-
-        unsigned int vao;
-        GLCall(glGenVertexArrays(1, &vao));     //vertex array object 이름 생성
-        GLCall(glBindVertexArray(vao));         //bind a vertex array object
-
+        
         VertexArray va;
         VertexBuffer vb(positions, 4 * 2 * sizeof(float));
         VertexBufferLayout layout;
