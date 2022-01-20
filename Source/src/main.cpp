@@ -28,7 +28,7 @@ int main(void)  //main 함수
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);  //opengl 마이너 버전
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)    //window == 0, 종료
     {
         glfwTerminate();    //GLFW 종료
@@ -52,10 +52,10 @@ int main(void)  //main 함수
     
     {
         float positions[] = {   //x,y   //s,t
-            -0.5f,  -0.5f,  0.0f,   0.0f,       //0
-             0.5f,  -0.5f,  1.0f,   0.0f,       //1
-             0.5f,   0.5f,  1.0f,   1.0f,       //2
-            -0.5f,   0.5f,  0.0f,   1.0f        //3
+            100.0f,  100.0f,  0.0f,  0.0f,      //0
+            200.0f,  100.0f,  1.0f,  0.0f,      //1
+            200.0f,  200.0f,  1.0f,  1.0f,      //2
+            100.0f,  200.0f,  0.0f,  1.0f       //3
         };
 
         unsigned int indices[] = {
@@ -65,7 +65,6 @@ int main(void)  //main 함수
 
         GLCall(glEnable(GL_BLEND));         //Blending
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));  //GL_SRC_ALPHA: 0, GL_ONE_MINUS_SRC_ALPHA: 1 - 0 = 1
-        //
 
         
         VertexArray va; //VertexArray
@@ -77,7 +76,7 @@ int main(void)  //main 함수
 
         IndexBuffer ib(indices, 6); //IndexBuffer
 
-        glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -0.75f, 0.75f, -1.0f, 1.0f);    //정사영
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);    //정사영
 
         Shader shader(  //Shader
             #ifdef DEBUG
