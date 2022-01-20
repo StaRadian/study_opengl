@@ -60,8 +60,9 @@ int main(void)  //main 함수
             2, 3, 0
         };
 
-        GLCall(glEnable(GL_BLEND));
-        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        GLCall(glEnable(GL_BLEND));         //Blending
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));  //GL_SRC_ALPHA: 0, GL_ONE_MINUS_SRC_ALPHA: 1 - 0 = 1
+        //
 
         
         VertexArray va; //VertexArray
@@ -82,15 +83,16 @@ int main(void)  //main 함수
             );
             
         shader.Bind();
-        shader.SetUniform4f("u_Color",  0.8f, 0.3f, 0.8f, 1.0f);
+        //shader.SetUniform4f("u_Color",  0.8f, 0.3f, 0.8f, 1.0f);
 
         Texture texture(
             #ifdef DEBUG
-                "../res/textures/Mistarion_cat.png"
+                "../res/textures/OscarHedgehog.png"
             #else
-                "./Source/res/textures/Mistarion_cat.png"
+                "./Source/res/textures/OscarHedgehog.png"
             #endif
             );
+
         texture.Bind(); //slot: 0
         shader.SetUniform1i("u_Texture", 0);    //slot: 0
 
@@ -109,8 +111,8 @@ int main(void)  //main 함수
             /* Render here */
             renderer.Clear();
 
-            shader.Bind();
-            shader.SetUniform4f("u_Color",  r, 0.3f, 0.8f, 1.0f);
+            // shader.Bind();
+            // shader.SetUniform4f("u_Color",  r, 0.3f, 0.8f, 1.0f);
 
             renderer.Draw(va, ib, shader);
 
