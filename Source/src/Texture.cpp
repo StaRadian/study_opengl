@@ -1,7 +1,7 @@
 #include "Texture.h"
 
 #include <GL/glew.h>    //GLEW 라이브러리
-#include "stb_image.h"
+#include "stb_image/stb_image.h"
 #include "Debug.h"
 
 Texture::Texture(const std::string& path)

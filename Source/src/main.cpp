@@ -12,6 +12,9 @@
 #include "Renderer.h"
 #include "Texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 int main(void)  //main 함수
 {
     LOG("study_opengl Version 0.0.24");     //#11 Uniforms in OpenGL
@@ -74,6 +77,8 @@ int main(void)  //main 함수
 
         IndexBuffer ib(indices, 6); //IndexBuffer
 
+        glm::mat4 proj = glm::ortho(-1.0f, 1.0f, -0.75f, 0.75f, -1.0f, 1.0f);    //정사영
+
         Shader shader(  //Shader
             #ifdef DEBUG
                 "../res/shader/Basic.shader"
@@ -84,12 +89,13 @@ int main(void)  //main 함수
             
         shader.Bind();
         //shader.SetUniform4f("u_Color",  0.8f, 0.3f, 0.8f, 1.0f);
+        shader.SetUniformMat4f("u_MVP", proj);
 
         Texture texture(
             #ifdef DEBUG
-                "../res/textures/OscarHedgehog.png"
+                "../res/textures/Mistarion_cat.png"
             #else
-                "./Source/res/textures/OscarHedgehog.png"
+                "./Source/res/textures/Mistarion_cat.png"
             #endif
             );
 
@@ -111,8 +117,8 @@ int main(void)  //main 함수
             /* Render here */
             renderer.Clear();
 
-            // shader.Bind();
-            // shader.SetUniform4f("u_Color",  r, 0.3f, 0.8f, 1.0f);
+            //shader.Bind();
+            //shader.SetUniform4f("u_Color",  r, 0.3f, 0.8f, 1.0f);
 
             renderer.Draw(va, ib, shader);
 
