@@ -15,6 +15,7 @@
                 "-DGLEW_STATIC",
                 "-DDEBUG",  //디버그 mecro
                 "-g", //디버그
+                "${workspaceFolder}\\Source\\vendor\\imgui\\*.cpp",
                 "${workspaceFolder}\\Source\\src\\*.cpp",
                 "-lglfw3",
                 "-lglew32s",
