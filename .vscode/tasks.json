@@ -9,6 +9,7 @@
                 "-std=c++20",
                 "-I${workspaceFolder}\\Source\\inc",
                 "-I${workspaceFolder}\\Source\\vendor",
+                "-I${workspaceFolder}\\Source\\tests",
                 "-I${workspaceFolder}\\Dependencies\\include",
                 "-L${workspaceFolder}\\Dependencies\\library\\GLFW\\lib-mingw-w64",
                 "-L${workspaceFolder}\\Dependencies\\library\\GLEW\\x64",
@@ -16,6 +17,7 @@
                 "-DDEBUG",  //디버그 mecro
                 "-g", //디버그
                 "${workspaceFolder}\\Source\\vendor\\imgui\\*.cpp",
+                "${workspaceFolder}\\Source\\tests\\*.cpp",
                 "${workspaceFolder}\\Source\\src\\*.cpp",
                 "-lglfw3",
                 "-lglew32s",
@@ -40,10 +42,13 @@
                 "-std=c++20",
                 "-I${workspaceFolder}\\Source\\inc",
                 "-I${workspaceFolder}\\Source\\vendor",
+                "-I${workspaceFolder}\\Source\\tests",
                 "-I${workspaceFolder}\\Dependencies\\include",
                 "-L${workspaceFolder}\\Dependencies\\library\\GLFW\\lib-mingw-w64",
                 "-L${workspaceFolder}\\Dependencies\\library\\GLEW\\x64",
                 "-DGLEW_STATIC",
+                "${workspaceFolder}\\Source\\vendor\\imgui\\*.cpp",
+                "${workspaceFolder}\\Source\\tests\\*.cpp",
                 "${workspaceFolder}\\Source\\src\\*.cpp",
                 "-mwindows", //DOS창 제거
                 "-static",
