@@ -5,17 +5,10 @@
 
 #include "Debug.h"
 
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
 #include "Renderer.h"
-#include "Texture.h"
 
 #include "TestClearColor.h"
-
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include "TestTexture2D.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -80,6 +73,7 @@ int main(void)  //main 함수
         currentTest = testMenu;
 
         testMenu -> RegisterTest<test::TestClearColor>("Clear Color");
+        testMenu -> RegisterTest<test::TestTexture2D>("2D Texture");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
