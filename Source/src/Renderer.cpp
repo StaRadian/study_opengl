@@ -11,6 +11,6 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 {
     shader.Bind();
     va.Bind();
-    ib.Bind();
+    ib.Bind();      
     GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));    // mode: 삼각형, count: Indices 수, type: Indices type
 }
