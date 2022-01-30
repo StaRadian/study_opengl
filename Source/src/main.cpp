@@ -78,7 +78,7 @@ int main(void)  //main 함수
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
-            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f))
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
             /* Render here */
             renderer.Clear();
 

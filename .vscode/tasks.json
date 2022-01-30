@@ -27,7 +27,7 @@
                 "${workspaceFolder}\\myStudy_Debug.exe" //실행파일 위치 이름
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"
@@ -62,7 +62,7 @@
                 "${workspaceFolder}\\myStudy.exe" //실행파일 위치 이름
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"

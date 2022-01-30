@@ -44,21 +44,13 @@ namespace test {
         m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 6);
 
         m_Shader = std::make_unique<Shader>(
-            #ifdef DEBUG
-                "../res/shader/Basic.shader"
-            #else
                 "./Source/res/shader/Basic.shader"
-            #endif
             );
         m_Shader -> Bind();
         m_Shader -> SetUniform4f("u_Color",  0.8f, 0.3f, 0.8f, 1.0f);
 
         m_Texture = std::make_unique<Texture>(
-            #ifdef DEBUG
-                "../res/textures/Mistarion_cat.png"
-            #else
                 "./Source/res/textures/Mistarion_cat.png"
-            #endif
             );
         m_Shader -> SetUniform1i("u_Texture", 0);    //slot: 0
     }
